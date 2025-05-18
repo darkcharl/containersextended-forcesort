@@ -186,7 +186,7 @@ IsTagged(_Item, (TAG)MELEEWEAPON_c73365d5-38c3-49b4-9542-4f0c1e39c1d8, 1)
 AND
 IsTagged(_Inventory, (TAG)EXTRAPLANARCONTAINER_8bbc5e54-e381-4526-b082-4d85fc510d15, 0)
 AND
-GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_MeleeWeaponChest_2e850e24-0c13-49ff-bf51-29948baaf7f4, _Inventory, _Container)
+GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_MeleeWeaponsChest_2e850e24-0c13-49ff-bf51-29948baaf7f4, _Inventory, _Container)
 THEN
 ToInventory((ITEM)_Item, _Container, 1);
 
