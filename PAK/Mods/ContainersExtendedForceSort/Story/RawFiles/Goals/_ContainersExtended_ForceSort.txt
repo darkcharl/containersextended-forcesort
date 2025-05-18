@@ -171,6 +171,17 @@ ToInventory((ITEM)_Item, _Container, 1);
 IF
 AddedTo(_Item, _Inventory, _)
 AND
+IsTagged(_Item, (TAG)HEADWEAR_d4058e67-954f-46d8-9b0d-4dbc4087a44d, 1)
+AND
+IsTagged(_Inventory, (TAG)EXTRAPLANARCONTAINER_8bbc5e54-e381-4526-b082-4d85fc510d15, 0)
+AND
+GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_HeadwearBox_c05b14ba-ac1f-4282-8ccc-ccd05af9ecaa, _Inventory, _Container)
+THEN
+ToInventory((ITEM)_Item, _Container, 1);
+
+IF
+AddedTo(_Item, _Inventory, _)
+AND
 IsTagged(_Item, (TAG)POTION_56c99a77-8f6a-4584-8e41-2a3b9f6b5261, 1)
 AND
 IsTagged(_Inventory, (TAG)EXTRAPLANARCONTAINER_8bbc5e54-e381-4526-b082-4d85fc510d15, 0)
