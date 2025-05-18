@@ -13,6 +13,10 @@ AND
 IsEquipped((ITEM)_Item, 0)
 AND
 GetItemByTemplateInInventory((ITEMROOT)CampSupplySack_efcb70b7-868b-4214-968a-e23f6ad586bc, _Inventory, _Container)
+AND
+GetDirectInventoryOwner(_Container, _InventoryOwner)
+AND
+DB_Players((CHARACTER)_InventoryOwner)
 THEN
 ToInventory((ITEM)_Item, _Container, 1);
 
@@ -26,6 +30,10 @@ AND
 IsEquipped((ITEM)_Item, 0)
 AND
 GetItemByTemplateInInventory((ITEMROOT)CONT_GEN_AlchemyPouch_b7543ff4-5010-4c01-9bcd-4da1047aebfc, _Inventory, _Container)
+AND
+GetDirectInventoryOwner(_Container, _InventoryOwner)
+AND
+DB_Players((CHARACTER)_InventoryOwner)
 THEN
 ToInventory((ITEM)_Item, _Container, 1);
 
@@ -39,6 +47,10 @@ AND
 IsEquipped((ITEM)_Item, 0)
 AND
 GetItemByTemplateInInventory((ITEMROOT)CONT_GEN_AlchemyPouch_b7543ff4-5010-4c01-9bcd-4da1047aebfc, _Inventory, _Container)
+AND
+GetDirectInventoryOwner(_Container, _InventoryOwner)
+AND
+DB_Players((CHARACTER)_InventoryOwner)
 THEN
 ToInventory((ITEM)_Item, _Container, 1);
 
@@ -52,6 +64,10 @@ AND
 IsEquipped((ITEM)_Item, 0)
 AND
 GetItemByTemplateInInventory((ITEMROOT)CONT_GEN_Keychain_ee329627-dbee-405f-b9a6-b260de9ad34c, _Inventory, _Container)
+AND
+GetDirectInventoryOwner(_Container, _InventoryOwner)
+AND
+DB_Players((CHARACTER)_InventoryOwner)
 THEN
 ToInventory((ITEM)_Item, _Container, 1);
 
@@ -65,6 +81,10 @@ AND
 IsEquipped((ITEM)_Item, 0)
 AND
 GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_AventuringTools_c37f6372-be2c-4a27-9d62-0cfe15e0dae0, _Inventory, _Container)
+AND
+GetDirectInventoryOwner(_Container, _InventoryOwner)
+AND
+DB_Players((CHARACTER)_InventoryOwner)
 THEN
 ToInventory((ITEM)_Item, _Container, 1);
 
@@ -78,6 +98,10 @@ AND
 IsEquipped((ITEM)_Item, 0)
 AND
 GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_ArcheryWeaponsChest_c92f1609-45d1-4b97-8135-20b4473ddfb3, _Inventory, _Container)
+AND
+GetDirectInventoryOwner(_Container, _InventoryOwner)
+AND
+DB_Players((CHARACTER)_InventoryOwner)
 THEN
 ToInventory((ITEM)_Item, _Container, 1);
 
@@ -91,6 +115,10 @@ AND
 IsEquipped((ITEM)_Item, 0)
 AND
 GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_ArmorChest_13adf152-2273-4dd8-a5f6-a9c4e00d6f40, _Inventory, _Container)
+AND
+GetDirectInventoryOwner(_Container, _InventoryOwner)
+AND
+DB_Players((CHARACTER)_InventoryOwner)
 THEN
 ToInventory((ITEM)_Item, _Container, 1);
 
@@ -104,6 +132,10 @@ AND
 IsEquipped((ITEM)_Item, 0)
 AND
 GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_BookBag_2626e4de-979a-4c2a-b59a-7e7f89e8e18e, _Inventory, _Container)
+AND
+GetDirectInventoryOwner(_Container, _InventoryOwner)
+AND
+DB_Players((CHARACTER)_InventoryOwner)
 THEN
 ToInventory((ITEM)_Item, _Container, 1);
 
@@ -117,6 +149,10 @@ AND
 IsEquipped((ITEM)_Item, 0)
 AND
 GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_CloakBox_e3dedb5c-571a-4e98-8ff6-47de32e73dd7, _Inventory, _Container)
+AND
+GetDirectInventoryOwner(_Container, _InventoryOwner)
+AND
+DB_Players((CHARACTER)_InventoryOwner)
 THEN
 ToInventory((ITEM)_Item, _Container, 1);
 
@@ -130,6 +166,10 @@ AND
 IsEquipped((ITEM)_Item, 0)
 AND
 GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_CoinSack_0e356085-617d-44a5-bedb-256d31647b86, _Inventory, _Container)
+AND
+GetDirectInventoryOwner(_Container, _InventoryOwner)
+AND
+DB_Players((CHARACTER)_InventoryOwner)
 THEN
 ToInventory((ITEM)_Item, _Container, 1);
 
@@ -143,6 +183,10 @@ AND
 IsEquipped((ITEM)_Item, 0)
 AND
 GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_DyeRack_6333d107-fc3d-43d3-a2bb-b29f76d434d8, _Inventory, _Container)
+AND
+GetDirectInventoryOwner(_Container, _InventoryOwner)
+AND
+DB_Players((CHARACTER)_InventoryOwner)
 THEN
 ToInventory((ITEM)_Item, _Container, 1);
 
@@ -156,6 +200,10 @@ AND
 IsEquipped((ITEM)_Item, 0)
 AND
 GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_ExplosivesBarrel_224730ad-64e0-4de6-aaec-3668e77dace2, _Inventory, _Container)
+AND
+GetDirectInventoryOwner(_Container, _InventoryOwner)
+AND
+DB_Players((CHARACTER)_InventoryOwner)
 THEN
 ToInventory((ITEM)_Item, _Container, 1);
 
@@ -169,6 +217,10 @@ AND
 IsEquipped((ITEM)_Item, 0)
 AND
 GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_FootwearBox_5159664a-4998-4ade-ac73-93da44cb2d6f, _Inventory, _Container)
+AND
+GetDirectInventoryOwner(_Container, _InventoryOwner)
+AND
+DB_Players((CHARACTER)_InventoryOwner)
 THEN
 ToInventory((ITEM)_Item, _Container, 1);
 
@@ -182,6 +234,10 @@ AND
 IsEquipped((ITEM)_Item, 0)
 AND
 GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_GloveBox_59adcda4-0efa-4697-8aba-48063e6d7481, _Inventory, _Container)
+AND
+GetDirectInventoryOwner(_Container, _InventoryOwner)
+AND
+DB_Players((CHARACTER)_InventoryOwner)
 THEN
 ToInventory((ITEM)_Item, _Container, 1);
 
@@ -195,6 +251,10 @@ AND
 IsEquipped((ITEM)_Item, 0)
 AND
 GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_GrenadeContainer_14415b1f-47cf-4672-b2cf-dd8db20a37e4, _Inventory, _Container)
+AND
+GetDirectInventoryOwner(_Container, _InventoryOwner)
+AND
+DB_Players((CHARACTER)_InventoryOwner)
 THEN
 ToInventory((ITEM)_Item, _Container, 1);
 
@@ -208,6 +268,10 @@ AND
 IsEquipped((ITEM)_Item, 0)
 AND
 GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_HeadwearBox_c05b14ba-ac1f-4282-8ccc-ccd05af9ecaa, _Inventory, _Container)
+AND
+GetDirectInventoryOwner(_Container, _InventoryOwner)
+AND
+DB_Players((CHARACTER)_InventoryOwner)
 THEN
 ToInventory((ITEM)_Item, _Container, 1);
 
@@ -221,6 +285,10 @@ AND
 IsEquipped((ITEM)_Item, 0)
 AND
 GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_MeleeWeaponsChest_2e850e24-0c13-49ff-bf51-29948baaf7f4, _Inventory, _Container)
+AND
+GetDirectInventoryOwner(_Container, _InventoryOwner)
+AND
+DB_Players((CHARACTER)_InventoryOwner)
 THEN
 ToInventory((ITEM)_Item, _Container, 1);
 
@@ -234,6 +302,10 @@ AND
 IsEquipped((ITEM)_Item, 0)
 AND
 GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_PotionCase_9624d2e7-ab93-49df-9f34-90dcead9e5d7, _Inventory, _Container)
+AND
+GetDirectInventoryOwner(_Container, _InventoryOwner)
+AND
+DB_Players((CHARACTER)_InventoryOwner)
 THEN
 ToInventory((ITEM)_Item, _Container, 1);
 
@@ -247,6 +319,10 @@ AND
 IsEquipped((ITEM)_Item, 0)
 AND
 GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_Quiver_ec028adf-be8e-468d-81d6-e3a5ea85eae1, _Inventory, _Container)
+AND
+GetDirectInventoryOwner(_Container, _InventoryOwner)
+AND
+DB_Players((CHARACTER)_InventoryOwner)
 THEN
 ToInventory((ITEM)_Item, _Container, 1);
 
@@ -260,6 +336,10 @@ AND
 IsEquipped((ITEM)_Item, 0)
 AND
 GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_ScrollCase_e6ae8c31-f079-4aea-8e87-3b35463518cc, _Inventory, _Container)
+AND
+GetDirectInventoryOwner(_Container, _InventoryOwner)
+AND
+DB_Players((CHARACTER)_InventoryOwner)
 THEN
 ToInventory((ITEM)_Item, _Container, 1);
 
@@ -273,6 +353,10 @@ AND
 IsEquipped((ITEM)_Item, 0)
 AND
 GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_ShieldsChest_c56debec-7e08-4efd-8a75-3841ec448033, _Inventory, _Container)
+AND
+GetDirectInventoryOwner(_Container, _InventoryOwner)
+AND
+DB_Players((CHARACTER)_InventoryOwner)
 THEN
 ToInventory((ITEM)_Item, _Container, 1);
 
@@ -286,6 +370,10 @@ AND
 IsEquipped((ITEM)_Item, 0)
 AND
 GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_TeddyBear_2062cd5f-3725-46b0-8f12-75e7dad9078a, _Inventory, _Container)
+AND
+GetDirectInventoryOwner(_Container, _InventoryOwner)
+AND
+DB_Players((CHARACTER)_InventoryOwner)
 THEN
 ToInventory((ITEM)_Item, _Container, 1);
 
@@ -299,6 +387,10 @@ AND
 IsEquipped((ITEM)_Item, 0)
 AND
 GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_ThrownWeaponsChest_3552b5eb-b261-4f9e-bd46-8830d3f898d1, _Inventory, _Container)
+AND
+GetDirectInventoryOwner(_Container, _InventoryOwner)
+AND
+DB_Players((CHARACTER)_InventoryOwner)
 THEN
 ToInventory((ITEM)_Item, _Container, 1);
 
@@ -312,6 +404,10 @@ AND
 IsEquipped((ITEM)_Item, 0)
 AND
 GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_Wardrobe_8c3d8b21-0fb9-44be-ad00-ef0531fa2f1d, _Inventory, _Container)
+AND
+GetDirectInventoryOwner(_Container, _InventoryOwner)
+AND
+DB_Players((CHARACTER)_InventoryOwner)
 THEN
 ToInventory((ITEM)_Item, _Container, 1);
 
