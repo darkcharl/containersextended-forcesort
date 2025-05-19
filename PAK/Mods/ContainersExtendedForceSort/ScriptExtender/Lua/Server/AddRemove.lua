@@ -15,11 +15,11 @@ local function AddedToHandler(object, inventoryHolder, addType)
                 print('Tags:')
                 _D(e.Tag)
             end
-            -- _D(e:GetAllComponents())
             if (e.OriginalTemplate) then
                 print('Original template:')
                 _D(e.OriginalTemplate)
             end
+            _D(e:GetAllComponents())
         end
     end
 
