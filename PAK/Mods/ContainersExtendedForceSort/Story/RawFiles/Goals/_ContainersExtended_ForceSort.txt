@@ -16,11 +16,13 @@ GetItemByTemplateInInventory((ITEMROOT)CampSupplySack_efcb70b7-868b-4214-968a-e2
 AND
 GetDirectInventoryOwner(_Container, _InventoryOwner)
 AND
+GetStackAmount(_Item, _ExactItemAmount, _TotalAmount)
+AND
 DB_Players((CHARACTER)_InventoryOwner)
 AND
 NOT DB_GlobalFlag((FLAG)ContainersExtended_ForceSort_Disabled_5a5d0e15-8ed5-4556-b8ce-071c07ee825f)
 THEN
-ToInventory((ITEM)_Item, _Container, 1);
+ToInventory((ITEM)_Item, _Container, _ExactItemAmount);
 
 IF
 AddedTo(_Item, _Inventory, _)
@@ -35,11 +37,13 @@ GetItemByTemplateInInventory((ITEMROOT)CONT_GEN_AlchemyPouch_b7543ff4-5010-4c01-
 AND
 GetDirectInventoryOwner(_Container, _InventoryOwner)
 AND
+GetStackAmount(_Item, _ExactItemAmount, _TotalAmount)
+AND
 DB_Players((CHARACTER)_InventoryOwner)
 AND
 NOT DB_GlobalFlag((FLAG)ContainersExtended_ForceSort_Disabled_5a5d0e15-8ed5-4556-b8ce-071c07ee825f)
 THEN
-ToInventory((ITEM)_Item, _Container, 1);
+ToInventory((ITEM)_Item, _Container, _ExactItemAmount);
 
 IF
 AddedTo(_Item, _Inventory, _)
@@ -54,11 +58,13 @@ GetItemByTemplateInInventory((ITEMROOT)CONT_GEN_AlchemyPouch_b7543ff4-5010-4c01-
 AND
 GetDirectInventoryOwner(_Container, _InventoryOwner)
 AND
+GetStackAmount(_Item, _ExactItemAmount, _TotalAmount)
+AND
 DB_Players((CHARACTER)_InventoryOwner)
 AND
 NOT DB_GlobalFlag((FLAG)ContainersExtended_ForceSort_Disabled_5a5d0e15-8ed5-4556-b8ce-071c07ee825f)
 THEN
-ToInventory((ITEM)_Item, _Container, 1);
+ToInventory((ITEM)_Item, _Container, _ExactItemAmount);
 
 IF
 AddedTo(_Item, _Inventory, _)
@@ -73,11 +79,13 @@ GetItemByTemplateInInventory((ITEMROOT)CONT_GEN_Keychain_ee329627-dbee-405f-b9a6
 AND
 GetDirectInventoryOwner(_Container, _InventoryOwner)
 AND
+GetStackAmount(_Item, _ExactItemAmount, _TotalAmount)
+AND
 DB_Players((CHARACTER)_InventoryOwner)
 AND
 NOT DB_GlobalFlag((FLAG)ContainersExtended_ForceSort_Disabled_5a5d0e15-8ed5-4556-b8ce-071c07ee825f)
 THEN
-ToInventory((ITEM)_Item, _Container, 1);
+ToInventory((ITEM)_Item, _Container, _ExactItemAmount);
 
 IF
 AddedTo(_Item, _Inventory, _)
@@ -92,11 +100,13 @@ GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_AventuringTools_c3
 AND
 GetDirectInventoryOwner(_Container, _InventoryOwner)
 AND
+GetStackAmount(_Item, _ExactItemAmount, _TotalAmount)
+AND
 DB_Players((CHARACTER)_InventoryOwner)
 AND
 NOT DB_GlobalFlag((FLAG)ContainersExtended_ForceSort_Disabled_5a5d0e15-8ed5-4556-b8ce-071c07ee825f)
 THEN
-ToInventory((ITEM)_Item, _Container, 1);
+ToInventory((ITEM)_Item, _Container, _ExactItemAmount);
 
 IF
 AddedTo(_Item, _Inventory, _)
@@ -111,11 +121,13 @@ GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_ArcheryWeaponsChes
 AND
 GetDirectInventoryOwner(_Container, _InventoryOwner)
 AND
+GetStackAmount(_Item, _ExactItemAmount, _TotalAmount)
+AND
 DB_Players((CHARACTER)_InventoryOwner)
 AND
 NOT DB_GlobalFlag((FLAG)ContainersExtended_ForceSort_Disabled_5a5d0e15-8ed5-4556-b8ce-071c07ee825f)
 THEN
-ToInventory((ITEM)_Item, _Container, 1);
+ToInventory((ITEM)_Item, _Container, _ExactItemAmount);
 
 IF
 AddedTo(_Item, _Inventory, _)
@@ -130,11 +142,13 @@ GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_ArmorChest_13adf15
 AND
 GetDirectInventoryOwner(_Container, _InventoryOwner)
 AND
+GetStackAmount(_Item, _ExactItemAmount, _TotalAmount)
+AND
 DB_Players((CHARACTER)_InventoryOwner)
 AND
 NOT DB_GlobalFlag((FLAG)ContainersExtended_ForceSort_Disabled_5a5d0e15-8ed5-4556-b8ce-071c07ee825f)
 THEN
-ToInventory((ITEM)_Item, _Container, 1);
+ToInventory((ITEM)_Item, _Container, _ExactItemAmount);
 
 IF
 AddedTo(_Item, _Inventory, _)
@@ -149,11 +163,13 @@ GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_BookBag_2626e4de-9
 AND
 GetDirectInventoryOwner(_Container, _InventoryOwner)
 AND
+GetStackAmount(_Item, _ExactItemAmount, _TotalAmount)
+AND
 DB_Players((CHARACTER)_InventoryOwner)
 AND
 NOT DB_GlobalFlag((FLAG)ContainersExtended_ForceSort_Disabled_5a5d0e15-8ed5-4556-b8ce-071c07ee825f)
 THEN
-ToInventory((ITEM)_Item, _Container, 1);
+ToInventory((ITEM)_Item, _Container, _ExactItemAmount);
 
 IF
 AddedTo(_Item, _Inventory, _)
@@ -168,11 +184,13 @@ GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_CloakBox_e3dedb5c-
 AND
 GetDirectInventoryOwner(_Container, _InventoryOwner)
 AND
+GetStackAmount(_Item, _ExactItemAmount, _TotalAmount)
+AND
 DB_Players((CHARACTER)_InventoryOwner)
 AND
 NOT DB_GlobalFlag((FLAG)ContainersExtended_ForceSort_Disabled_5a5d0e15-8ed5-4556-b8ce-071c07ee825f)
 THEN
-ToInventory((ITEM)_Item, _Container, 1);
+ToInventory((ITEM)_Item, _Container, _ExactItemAmount);
 
 IF
 AddedTo(_Item, _Inventory, _)
@@ -187,11 +205,13 @@ GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_CoinSack_0e356085-
 AND
 GetDirectInventoryOwner(_Container, _InventoryOwner)
 AND
+GetStackAmount(_Item, _ExactItemAmount, _TotalAmount)
+AND
 DB_Players((CHARACTER)_InventoryOwner)
 AND
 NOT DB_GlobalFlag((FLAG)ContainersExtended_ForceSort_Disabled_5a5d0e15-8ed5-4556-b8ce-071c07ee825f)
 THEN
-ToInventory((ITEM)_Item, _Container, 1);
+ToInventory((ITEM)_Item, _Container, _ExactItemAmount);
 
 IF
 AddedTo(_Item, _Inventory, _)
@@ -206,11 +226,13 @@ GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_DyeRack_6333d107-f
 AND
 GetDirectInventoryOwner(_Container, _InventoryOwner)
 AND
+GetStackAmount(_Item, _ExactItemAmount, _TotalAmount)
+AND
 DB_Players((CHARACTER)_InventoryOwner)
 AND
 NOT DB_GlobalFlag((FLAG)ContainersExtended_ForceSort_Disabled_5a5d0e15-8ed5-4556-b8ce-071c07ee825f)
 THEN
-ToInventory((ITEM)_Item, _Container, 1);
+ToInventory((ITEM)_Item, _Container, _ExactItemAmount);
 
 IF
 AddedTo(_Item, _Inventory, _)
@@ -225,11 +247,13 @@ GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_ExplosivesBarrel_2
 AND
 GetDirectInventoryOwner(_Container, _InventoryOwner)
 AND
+GetStackAmount(_Item, _ExactItemAmount, _TotalAmount)
+AND
 DB_Players((CHARACTER)_InventoryOwner)
 AND
 NOT DB_GlobalFlag((FLAG)ContainersExtended_ForceSort_Disabled_5a5d0e15-8ed5-4556-b8ce-071c07ee825f)
 THEN
-ToInventory((ITEM)_Item, _Container, 1);
+ToInventory((ITEM)_Item, _Container, _ExactItemAmount);
 
 IF
 AddedTo(_Item, _Inventory, _)
@@ -244,11 +268,13 @@ GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_FootwearBox_515966
 AND
 GetDirectInventoryOwner(_Container, _InventoryOwner)
 AND
+GetStackAmount(_Item, _ExactItemAmount, _TotalAmount)
+AND
 DB_Players((CHARACTER)_InventoryOwner)
 AND
 NOT DB_GlobalFlag((FLAG)ContainersExtended_ForceSort_Disabled_5a5d0e15-8ed5-4556-b8ce-071c07ee825f)
 THEN
-ToInventory((ITEM)_Item, _Container, 1);
+ToInventory((ITEM)_Item, _Container, _ExactItemAmount);
 
 IF
 AddedTo(_Item, _Inventory, _)
@@ -263,11 +289,13 @@ GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_GloveBox_59adcda4-
 AND
 GetDirectInventoryOwner(_Container, _InventoryOwner)
 AND
+GetStackAmount(_Item, _ExactItemAmount, _TotalAmount)
+AND
 DB_Players((CHARACTER)_InventoryOwner)
 AND
 NOT DB_GlobalFlag((FLAG)ContainersExtended_ForceSort_Disabled_5a5d0e15-8ed5-4556-b8ce-071c07ee825f)
 THEN
-ToInventory((ITEM)_Item, _Container, 1);
+ToInventory((ITEM)_Item, _Container, _ExactItemAmount);
 
 IF
 AddedTo(_Item, _Inventory, _)
@@ -282,11 +310,13 @@ GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_GrenadeContainer_1
 AND
 GetDirectInventoryOwner(_Container, _InventoryOwner)
 AND
+GetStackAmount(_Item, _ExactItemAmount, _TotalAmount)
+AND
 DB_Players((CHARACTER)_InventoryOwner)
 AND
 NOT DB_GlobalFlag((FLAG)ContainersExtended_ForceSort_Disabled_5a5d0e15-8ed5-4556-b8ce-071c07ee825f)
 THEN
-ToInventory((ITEM)_Item, _Container, 1);
+ToInventory((ITEM)_Item, _Container, _ExactItemAmount);
 
 IF
 AddedTo(_Item, _Inventory, _)
@@ -301,11 +331,13 @@ GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_HeadwearBox_c05b14
 AND
 GetDirectInventoryOwner(_Container, _InventoryOwner)
 AND
+GetStackAmount(_Item, _ExactItemAmount, _TotalAmount)
+AND
 DB_Players((CHARACTER)_InventoryOwner)
 AND
 NOT DB_GlobalFlag((FLAG)ContainersExtended_ForceSort_Disabled_5a5d0e15-8ed5-4556-b8ce-071c07ee825f)
 THEN
-ToInventory((ITEM)_Item, _Container, 1);
+ToInventory((ITEM)_Item, _Container, _ExactItemAmount);
 
 IF
 AddedTo(_Item, _Inventory, _)
@@ -320,11 +352,13 @@ GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_MeleeWeaponsChest_
 AND
 GetDirectInventoryOwner(_Container, _InventoryOwner)
 AND
+GetStackAmount(_Item, _ExactItemAmount, _TotalAmount)
+AND
 DB_Players((CHARACTER)_InventoryOwner)
 AND
 NOT DB_GlobalFlag((FLAG)ContainersExtended_ForceSort_Disabled_5a5d0e15-8ed5-4556-b8ce-071c07ee825f)
 THEN
-ToInventory((ITEM)_Item, _Container, 1);
+ToInventory((ITEM)_Item, _Container, _ExactItemAmount);
 
 IF
 AddedTo(_Item, _Inventory, _)
@@ -339,11 +373,13 @@ GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_PotionCase_9624d2e
 AND
 GetDirectInventoryOwner(_Container, _InventoryOwner)
 AND
+GetStackAmount(_Item, _ExactItemAmount, _TotalAmount)
+AND
 DB_Players((CHARACTER)_InventoryOwner)
 AND
 NOT DB_GlobalFlag((FLAG)ContainersExtended_ForceSort_Disabled_5a5d0e15-8ed5-4556-b8ce-071c07ee825f)
 THEN
-ToInventory((ITEM)_Item, _Container, 1);
+ToInventory((ITEM)_Item, _Container, _ExactItemAmount);
 
 IF
 AddedTo(_Item, _Inventory, _)
@@ -358,11 +394,13 @@ GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_Quiver_ec028adf-be
 AND
 GetDirectInventoryOwner(_Container, _InventoryOwner)
 AND
+GetStackAmount(_Item, _ExactItemAmount, _TotalAmount)
+AND
 DB_Players((CHARACTER)_InventoryOwner)
 AND
 NOT DB_GlobalFlag((FLAG)ContainersExtended_ForceSort_Disabled_5a5d0e15-8ed5-4556-b8ce-071c07ee825f)
 THEN
-ToInventory((ITEM)_Item, _Container, 1);
+ToInventory((ITEM)_Item, _Container, _ExactItemAmount);
 
 IF
 AddedTo(_Item, _Inventory, _)
@@ -377,11 +415,13 @@ GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_ScrollCase_e6ae8c3
 AND
 GetDirectInventoryOwner(_Container, _InventoryOwner)
 AND
+GetStackAmount(_Item, _ExactItemAmount, _TotalAmount)
+AND
 DB_Players((CHARACTER)_InventoryOwner)
 AND
 NOT DB_GlobalFlag((FLAG)ContainersExtended_ForceSort_Disabled_5a5d0e15-8ed5-4556-b8ce-071c07ee825f)
 THEN
-ToInventory((ITEM)_Item, _Container, 1);
+ToInventory((ITEM)_Item, _Container, _ExactItemAmount);
 
 IF
 AddedTo(_Item, _Inventory, _)
@@ -396,11 +436,13 @@ GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_ShieldsChest_c56de
 AND
 GetDirectInventoryOwner(_Container, _InventoryOwner)
 AND
+GetStackAmount(_Item, _ExactItemAmount, _TotalAmount)
+AND
 DB_Players((CHARACTER)_InventoryOwner)
 AND
 NOT DB_GlobalFlag((FLAG)ContainersExtended_ForceSort_Disabled_5a5d0e15-8ed5-4556-b8ce-071c07ee825f)
 THEN
-ToInventory((ITEM)_Item, _Container, 1);
+ToInventory((ITEM)_Item, _Container, _ExactItemAmount);
 
 IF
 AddedTo(_Item, _Inventory, _)
@@ -415,11 +457,13 @@ GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_TeddyBear_2062cd5f
 AND
 GetDirectInventoryOwner(_Container, _InventoryOwner)
 AND
+GetStackAmount(_Item, _ExactItemAmount, _TotalAmount)
+AND
 DB_Players((CHARACTER)_InventoryOwner)
 AND
 NOT DB_GlobalFlag((FLAG)ContainersExtended_ForceSort_Disabled_5a5d0e15-8ed5-4556-b8ce-071c07ee825f)
 THEN
-ToInventory((ITEM)_Item, _Container, 1);
+ToInventory((ITEM)_Item, _Container, _ExactItemAmount);
 
 IF
 AddedTo(_Item, _Inventory, _)
@@ -434,11 +478,13 @@ GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_ThrownWeaponsChest
 AND
 GetDirectInventoryOwner(_Container, _InventoryOwner)
 AND
+GetStackAmount(_Item, _ExactItemAmount, _TotalAmount)
+AND
 DB_Players((CHARACTER)_InventoryOwner)
 AND
 NOT DB_GlobalFlag((FLAG)ContainersExtended_ForceSort_Disabled_5a5d0e15-8ed5-4556-b8ce-071c07ee825f)
 THEN
-ToInventory((ITEM)_Item, _Container, 1);
+ToInventory((ITEM)_Item, _Container, _ExactItemAmount);
 
 IF
 AddedTo(_Item, _Inventory, _)
@@ -453,11 +499,13 @@ GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_Wardrobe_8c3d8b21-
 AND
 GetDirectInventoryOwner(_Container, _InventoryOwner)
 AND
+GetStackAmount(_Item, _ExactItemAmount, _TotalAmount)
+AND
 DB_Players((CHARACTER)_InventoryOwner)
 AND
 NOT DB_GlobalFlag((FLAG)ContainersExtended_ForceSort_Disabled_5a5d0e15-8ed5-4556-b8ce-071c07ee825f)
 THEN
-ToInventory((ITEM)_Item, _Container, 1);
+ToInventory((ITEM)_Item, _Container, _ExactItemAmount);
 
 
 EXITSECTION
