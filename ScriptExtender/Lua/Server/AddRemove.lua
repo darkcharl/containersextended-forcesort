@@ -19,7 +19,7 @@ local function AddedToHandler(object, inventoryHolder, addType)
                 print('Original template:')
                 _D(e.OriginalTemplate)
             end
-            _D(e:GetAllComponents())
+            -- _D(e:GetAllComponents())
         end
     end
 
@@ -38,6 +38,21 @@ local function RemovedFromHandler(object, inventoryHolder)
     end
 end
 
+local function MovedFromToHandler(object, source, destination)
+    if debugMode then
+        print('-- MovedFromToHandler')
+        print('Object:     ', object)
+        print('Source:     ', source)
+        print('Destination:', destination)
+
+        e = Ext.Entity.Get(object)
+        if (e and e.Tag) then
+            print('Tags:')
+            _D(e.Tag)
+        end
+    end
+end
 
 Ext.Osiris.RegisterListener("AddedTo", 3, "before", AddedToHandler)
 Ext.Osiris.RegisterListener("RemovedFrom", 2, "after", RemovedFromHandler)
+Ext.Osiris.RegisterListener("MovedFromTo", 3, "after", MovedFromToHandler)

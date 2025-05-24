@@ -1,0 +1,32 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+IF
+AddedTo(_Item, _Container, _)
+AND
+IsTagged(_Container, (TAG)EXTRAPLANARCONTAINER_8bbc5e54-e381-4526-b082-4d85fc510d15, 1)
+AND
+NOT DB_GlobalFlag((FLAG)ContainersExtended_ForceSort_Disabled_5a5d0e15-8ed5-4556-b8ce-071c07ee825f)
+AND
+GetMaxStackAmount((ITEM)_Item, _MaxStackAmount)
+AND
+_MaxStackAmount > 1
+AND
+GetStackAmount((ITEM)_Item, _ExactItemAmount, _TotalAmount)
+AND
+GetTemplate(_Item, _Template)
+AND
+TemplateIsInInventory((ITEMROOT)_Template, _Container, _OriginCount)
+AND
+GetItemByTemplateInInventory(_Template, _Container, _OriginItem)
+AND
+IntegerSum(_ExactItemAmount, _OriginCount, _NewStackSize)
+THEN
+SetStackAmount((ITEM)_OriginItem, _NewStackSize);
+
+
+EXITSECTION
+
+ENDEXITSECTION
