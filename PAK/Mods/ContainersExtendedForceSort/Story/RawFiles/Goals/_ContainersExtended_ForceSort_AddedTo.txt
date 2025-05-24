@@ -342,6 +342,27 @@ ToInventory((ITEM)_Item, _Container, _ExactItemAmount);
 IF
 AddedTo(_Item, _Inventory, _)
 AND
+IsTagged(_Item, (TAG)JEWELRY_69d067e4-6c41-4812-92d8-aab0eb8ef2ac, 1)
+AND
+IsTagged(_Inventory, (TAG)EXTRAPLANARCONTAINER_8bbc5e54-e381-4526-b082-4d85fc510d15, 0)
+AND
+IsEquipped((ITEM)_Item, 0)
+AND
+GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_JewelryBox_a5c85fc6-c7bf-49a8-b74b-5832d7e39d42, _Inventory, _Container)
+AND
+GetDirectInventoryOwner(_Container, _InventoryOwner)
+AND
+DB_Players((CHARACTER)_InventoryOwner)
+AND
+NOT DB_GlobalFlag((FLAG)ContainersExtended_ForceSort_Disabled_5a5d0e15-8ed5-4556-b8ce-071c07ee825f)
+AND
+GetStackAmount(_Item, _ExactItemAmount, _TotalAmount)
+THEN
+ToInventory((ITEM)_Item, _Container, _ExactItemAmount);
+
+IF
+AddedTo(_Item, _Inventory, _)
+AND
 IsTagged(_Item, (TAG)MELEEWEAPON_c73365d5-38c3-49b4-9542-4f0c1e39c1d8, 1)
 AND
 IsTagged(_Inventory, (TAG)EXTRAPLANARCONTAINER_8bbc5e54-e381-4526-b082-4d85fc510d15, 0)
