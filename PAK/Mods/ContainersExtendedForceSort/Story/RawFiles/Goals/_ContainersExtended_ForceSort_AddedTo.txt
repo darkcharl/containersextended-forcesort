@@ -9,10 +9,13 @@ AND
 DB_Players((CHARACTER)_Inventory)
 AND
 IsEquipped((ITEM)_Item, 0)
-AND
-Random(1000, _Delay)
 THEN
-ObjectTimerLaunch(_Item, "ContainersExtended_ForceSort", _Delay);
+PROC_ContainersExtended_SortItems(_Item, _Inventory);
+
+// AND
+// Random(1000, _Delay)
+// THEN
+// ObjectTimerLaunch(_Item, "ContainersExtended_ForceSort", _Delay);
 
 EXITSECTION
 
