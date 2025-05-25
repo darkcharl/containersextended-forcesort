@@ -35,7 +35,7 @@ PROC_ContainersExtended_MoveItem((ITEM)_Item, (GUIDSTRING)_Container)
 AND
 GetStackAmount(_Item, _ExactItemAmount, _)
 THEN
-ToInventory(_Item, _Container, _ExactItemAmount);
+ToInventory(_Item, _Container, _ExactItemAmount, 0, 0);
 
 // Adventuring Tools
 PROC

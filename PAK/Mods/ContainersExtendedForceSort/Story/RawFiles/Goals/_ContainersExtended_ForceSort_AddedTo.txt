@@ -9,7 +9,10 @@ AND
 DB_Players((CHARACTER)_Inventory)
 AND
 IsEquipped((ITEM)_Item, 0)
+AND
+HasAppliedStatus(_Item, "CONTAINERS_EXTENDED_FORCESORT", 0)
 THEN
+ApplyStatus(_Item, "CONTAINERS_EXTENDED_FORCESORT", -1.0, 1);
 PROC_ContainersExtended_SortItems(_Item, _Inventory);
 
 // AND
