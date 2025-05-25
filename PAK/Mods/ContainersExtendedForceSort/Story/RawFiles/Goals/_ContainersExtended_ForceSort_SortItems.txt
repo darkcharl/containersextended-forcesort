@@ -129,6 +129,16 @@ GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_CloakBox_e3dedb5c-
 THEN
 PROC_ContainersExtended_MoveItem((ITEM)_Item, _Container);
 
+// Coatings
+PROC
+PROC_ContainersExtended_SortItem((GUIDSTRING)_Item, (GUIDSTRING)_Inventory)
+AND
+IsTagged(_Item, (TAG)COATING_354041e2-72d7-422d-ae75-aa0ac22d5ebd, 1)
+AND
+GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_CoatingsCase_bc5558b7-1ff8-482b-aa07-f067b78a944e, _Inventory, _Container)
+THEN
+PROC_ContainersExtended_MoveItem((ITEM)_Item, _Container);
+
 // Consumable
 PROC
 PROC_ContainersExtended_SortItem((GUIDSTRING)_Item, (GUIDSTRING)_Inventory)
