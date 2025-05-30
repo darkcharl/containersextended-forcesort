@@ -23,7 +23,6 @@ AND
 IsTagged((ITEM)_Container, (TAG)EXTRAPLANARCONTAINER_8bbc5e54-e381-4526-b082-4d85fc510d15, 1)
 THEN
 IterateInventory(_Container, "ContainersExtendedForceSort_ApplyItem", "ContainersExtendedForceSort_ApplyItemDone");
-MoveAllItemsTo(_Container, _Container);
 
 IF
 EntityEvent(_Item, "ContainersExtendedForceSort_ApplyItem")
