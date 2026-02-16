@@ -11,7 +11,7 @@ IterateInventory(_Player, "ContainersExtendedForceSort_ApplyContainer", "Contain
 
 IF LongRestFinished()
 AND
-GetHostCharacter(_Player)
+DB_Players(_Player)
 THEN
 IterateInventory(_Player, "ContainersExtendedForceSort_ApplyContainer", "ContainersExtendedForceSort_ApplyContainerDone");
 
