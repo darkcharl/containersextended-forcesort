@@ -24,8 +24,6 @@ AND
 NOT DB_GlobalFlag((FLAG)ContainersExtended_ForceSort_Disabled_5a5d0e15-8ed5-4556-b8ce-071c07ee825f)
 AND
 IsTagged(_Item, (TAG)EXTRAPLANARCONTAINER_8bbc5e54-e381-4526-b082-4d85fc510d15, 0) // Do not sort containers themselves
-AND
-IsTagged(_Inventory, (TAG)EXTRAPLANARCONTAINER_8bbc5e54-e381-4526-b082-4d85fc510d15, 0) // Check if inventory is our container
 THEN
 PROC_ContainersExtended_SortItem(_Item, _Inventory);
 
@@ -321,10 +319,6 @@ AND
 GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_Wardrobe_8c3d8b21-0fb9-44be-ad00-ef0531fa2f1d, _Inventory, _Container)
 THEN
 PROC_ContainersExtended_MoveItem(_Item, _Container);
-
-// AND
-// GetItemByTemplateInInventory((ITEMROOT)OBJ_ContainersExtended_BagOfHolding_6c08cd7c-bc9e-4c2a-aff5-889c8eb9cc27, _Inventory, _Container)
-// MagicPocketsMoveToByTag(_Inventory, "MELEEWEAPON_c73365d5-38c3-49b4-9542-4f0c1e39c1d8", 99, _Container, 0, 1);
 
 EXITSECTION
 
