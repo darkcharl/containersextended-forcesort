@@ -8,6 +8,8 @@ MovedFromTo(_Item, _, _Inventory, 0)
 AND
 DB_Players((CHARACTER)_Inventory)
 AND
+IsTagged(_Inventory, (TAG)EXTRAPLANARCONTAINER_8bbc5e54-e381-4526-b082-4d85fc510d15, 0)
+AND
 IsEquipped((ITEM)_Item, 0)
 AND
 HasAppliedStatus(_Item, "CONTAINERS_EXTENDED_FORCESORT", 0)
