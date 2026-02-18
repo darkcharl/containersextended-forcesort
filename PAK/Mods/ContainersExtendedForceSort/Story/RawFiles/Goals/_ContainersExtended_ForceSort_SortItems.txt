@@ -27,12 +27,23 @@ IsTagged(_Item, (TAG)EXTRAPLANARCONTAINER_8bbc5e54-e381-4526-b082-4d85fc510d15, 
 THEN
 PROC_ContainersExtended_SortItem(_Item, _Inventory);
 
+// Apply EXTRAPLANAR_STORAGE before moving if destination is an extraplanar container
+PROC
+PROC_ContainersExtended_ApplyExtraplanarStatus((GUIDSTRING)_Item, (GUIDSTRING)_Container)
+AND
+IsTagged(_Container, (TAG)EXTRAPLANARCONTAINER_8bbc5e54-e381-4526-b082-4d85fc510d15, 1)
+AND
+HasAppliedStatus(_Item, "EXTRAPLANAR_STORAGE", 0)
+THEN
+ApplyStatus(_Item, "EXTRAPLANAR_STORAGE", -1.0, 1);
+
 // Get stack size and move full stack to container
 PROC
 PROC_ContainersExtended_MoveItem((GUIDSTRING)_Item, (GUIDSTRING)_Container)
 AND
 GetStackAmount((ITEM)_Item, _ExactItemAmount, _)
 THEN
+PROC_ContainersExtended_ApplyExtraplanarStatus(_Item, _Container);
 ToInventory(_Item, _Container, _ExactItemAmount, 0, 0);
 
 // Adventuring Tools
