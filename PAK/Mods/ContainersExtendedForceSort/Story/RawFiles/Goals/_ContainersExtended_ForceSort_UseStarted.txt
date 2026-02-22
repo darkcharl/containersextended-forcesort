@@ -3,9 +3,30 @@ SubGoalCombiner SGC_AND
 INITSECTION
 
 KBSECTION
-// When a player uses (opens) an ExtraplanarContainer, merge any duplicate partial
-// stacks inside it. UseStarted fires for inventory-bag containers; Opened() only
-// fires for world containers (chests, doors) and does NOT fire for inventory bags.
+// When a player opens an ExtraplanarContainer, merge duplicate partial stacks.
+//
+// Cap: GetMaxStackAmount is queried directly per item and used as the merge cap.
+//      Confirmed reliable — returns only 20 or 99 in practice.
+//
+// gsMax guard: Rule 1 and Rule 2b only act on items where the Osiris scripted amount
+//      (first GetStackAmount return) <= engine actual (second return). When scripted >
+//      actual it means a prior CEFS pass called SetStackAmount(N) and then actual dropped
+//      below N (items used). Calling SetStackAmount(target > actual) on such an item
+//      inflates gsMax: newScripted = oldScripted + (target - actual) > target. The
+//      guard is free for fresh/unprocessed items because their scripted always equals actual.
+//
+// Cleanup: ObjectTimerLaunch fires 1 second after IterateInventory is called,
+//          clearing all temporary DBs. The IterateInventory done event (CEFS_StackItemDone)
+//          fires but delivers a NULL entity, so it cannot be used for container-keyed cleanup.
+//
+// Guard: NOT DB_CE_ContainerOwner prevents re-entry while a pass is in progress.
+//        The timer clears it after ~1 second.
+//
+// Container key: UseStarted and ObjectTimerFinished provide the container as a
+//     full name-prefixed GUID (e.g. OBJ_..._<uuid>). GetDirectInventoryOwner
+//     returns only the bare UUID — a different string that does NOT match Osiris
+//     DB lookups against the prefixed form. All rules derive the container key from
+//     DB_CE_ContainerOwner (set by UseStarted, cleared by ObjectTimerFinished).
 
 IF
 UseStarted(_Player, _Container)
@@ -15,162 +36,158 @@ AND
 DB_Players((CHARACTER)_Player)
 AND
 IsTagged((ITEM)_Container, (TAG)EXTRAPLANARCONTAINER_8bbc5e54-e381-4526-b082-4d85fc510d15, 1)
+AND
+NOT DB_CE_ContainerOwner((ITEM)_Container, _)
 THEN
-DB_ContainersExtended_Stack_Owner((ITEM)_Container, (CHARACTER)_Player);
-IterateInventory(_Container, "ContainersExtendedForceSort_StackItem", "ContainersExtendedForceSort_StackItemDone");
+DB_CE_ContainerOwner((ITEM)_Container, (CHARACTER)_Player);
+ObjectTimerLaunch(_Container, "CEFS_Cleanup", 1000);
+IterateInventory(_Container, "CEFS_StackItem", "CEFS_StackItemDone");
 
-// Rule 1: Mark the first non-full item of each (container, template) pair as canonical,
-// and record its current stack amount in DB_CE_CanonicalAmt so Rules 2a/2b can track
-// running totals without reading stale engine values across multiple merges per pass.
-// Full stacks are excluded — they cannot accept any more items.
-// Must be listed before Rules 2a/2b.
+// ---- Pass: merge partial stacks ----
+
+// Rule 1: Designate the first partial stack of each template as canonical.
+// GetMaxStackAmount is used directly as the cap (confirmed to return only 20 or 99).
+// gsMax guard: see header comment above.
 IF
-EntityEvent(_Item, "ContainersExtendedForceSort_StackItem")
+EntityEvent(_Item, "CEFS_StackItem")
 AND
 IsItem((ITEM)_Item, 1)
 AND
 NOT DB_GlobalFlag((FLAG)ContainersExtended_ForceSort_Disabled_5a5d0e15-8ed5-4556-b8ce-071c07ee825f)
 AND
-GetMaxStackAmount((ITEM)_Item, _MaxStackAmount)
+GetMaxStackAmount((ITEM)_Item, _RawMax)
 AND
-_MaxStackAmount > 1
-AND
-GetStackAmount((ITEM)_Item, _ItemCurrentAmount, _)
-AND
-_ItemCurrentAmount < _MaxStackAmount
-AND
-GetDirectInventoryOwner(_Item, (ITEM)_DirectOwner)
-AND
-DB_ContainersExtended_Stack_Owner((ITEM)_DirectOwner, (CHARACTER)_Player)
+_RawMax > 1
 AND
 GetTemplate(_Item, _Template)
 AND
-NOT DB_CE_CanonicalItem((ITEM)_DirectOwner, _Template, _)
+DB_CE_ContainerOwner((ITEM)_ActiveContainer, _)
+AND
+GetStackAmount((ITEM)_Item, _ItemGsMax, _ItemCurrentAmount)
+AND
+_ItemCurrentAmount < _RawMax
+AND
+_ItemGsMax <= _ItemCurrentAmount
+AND
+NOT DB_CE_CanonicalItem((ITEM)_ActiveContainer, _Template, _)
 THEN
-DB_CE_CanonicalItem((ITEM)_DirectOwner, _Template, (ITEM)_Item);
-DB_CE_CanonicalAmt((ITEM)_DirectOwner, _Template, _ItemCurrentAmount);
+DB_CE_CanonicalItem((ITEM)_ActiveContainer, _Template, (ITEM)_Item);
+DB_CE_CanonicalAmt((ITEM)_ActiveContainer, _Template, _ItemCurrentAmount);
+DB_CE_CanonicalMax((ITEM)_ActiveContainer, _Template, _RawMax);
 
-// Rule 2a: Merge non-canonical item into canonical when combined count fits within max.
-// Reads canonical amount from DB_CE_CanonicalAmt (not the engine) so accumulated
-// changes from earlier merges in the same IterateInventory pass are reflected correctly.
+// Rule 2a: Merge non-canonical item into canonical when combined fits within cap.
+// Reads canonical amount from DB_CE_CanonicalAmt (not engine value) because
+// SetStackAmount writes are deferred — re-querying the engine mid-pass returns
+// the pre-commit value and would cause incorrect merge arithmetic.
 IF
-EntityEvent(_Item, "ContainersExtendedForceSort_StackItem")
+EntityEvent(_Item, "CEFS_StackItem")
 AND
 IsItem((ITEM)_Item, 1)
 AND
 NOT DB_GlobalFlag((FLAG)ContainersExtended_ForceSort_Disabled_5a5d0e15-8ed5-4556-b8ce-071c07ee825f)
 AND
-GetMaxStackAmount((ITEM)_Item, _MaxStackAmount2)
+GetTemplate(_Item, _Template)
 AND
-_MaxStackAmount2 > 1
+DB_CE_ContainerOwner((ITEM)_ActiveContainer, _)
 AND
-GetDirectInventoryOwner(_Item, (ITEM)_DirectOwner2)
+DB_CE_CanonicalItem((ITEM)_ActiveContainer, _Template, (ITEM)_Canonical)
 AND
-DB_ContainersExtended_Stack_Owner((ITEM)_DirectOwner2, (CHARACTER)_Player2)
+NOT DB_CE_CanonicalItem((ITEM)_ActiveContainer, _Template, (ITEM)_Item)
 AND
-GetTemplate(_Item, _Template2)
+DB_CE_CanonicalMax((ITEM)_ActiveContainer, _Template, _CanonMax)
 AND
-DB_CE_CanonicalItem((ITEM)_DirectOwner2, _Template2, (ITEM)_Canonical)
+DB_CE_CanonicalAmt((ITEM)_ActiveContainer, _Template, _CanonAmount)
 AND
-NOT DB_CE_CanonicalItem((ITEM)_DirectOwner2, _Template2, (ITEM)_Item)
+GetStackAmount((ITEM)_Item, _, _ItemAmount)
 AND
-DB_CE_CanonicalAmt((ITEM)_DirectOwner2, _Template2, _CanonAmount)
-AND
-GetStackAmount((ITEM)_Item, _ItemAmount, _)
-AND
-_ItemAmount < _MaxStackAmount2
+_ItemAmount < _CanonMax
 AND
 IntegerSum(_CanonAmount, _ItemAmount, _NewAmount)
 AND
-_NewAmount <= _MaxStackAmount2
+_NewAmount <= _CanonMax
 THEN
 SetStackAmount((ITEM)_Canonical, _NewAmount);
 RequestDelete(_Item);
-NOT DB_CE_CanonicalAmt((ITEM)_DirectOwner2, _Template2, _CanonAmount);
-DB_CE_CanonicalAmt((ITEM)_DirectOwner2, _Template2, _NewAmount);
+NOT DB_CE_CanonicalAmt((ITEM)_ActiveContainer, _Template, _CanonAmount);
+DB_CE_CanonicalAmt((ITEM)_ActiveContainer, _Template, _NewAmount);
 
-// Rule 2b: Overflow — combined count exceeds max. Fill canonical to max and reduce
-// item to the remainder (do NOT delete it). Reads/updates DB_CE_CanonicalAmt for the
-// same reason as 2a. On the next open the leftover stack may fit into a new canonical.
+// Rule 2b: Overflow — fill canonical to cap, reduce item to remainder.
+// Re-designates the remainder as the new canonical so subsequent items in
+// the same pass can continue merging into it.
+// gsMax guard: only transfer canonical status to items whose scripted <= actual. An item with
+// scripted > actual would inflate on any future SetStackAmount call above actual. Skipping it
+// here is safe because it can still be absorbed as a non-canonical via Rule 2a.
 IF
-EntityEvent(_Item3, "ContainersExtendedForceSort_StackItem")
+EntityEvent(_Item, "CEFS_StackItem")
 AND
-IsItem((ITEM)_Item3, 1)
+IsItem((ITEM)_Item, 1)
 AND
 NOT DB_GlobalFlag((FLAG)ContainersExtended_ForceSort_Disabled_5a5d0e15-8ed5-4556-b8ce-071c07ee825f)
 AND
-GetMaxStackAmount((ITEM)_Item3, _MaxStackAmount3)
+GetTemplate(_Item, _Template)
 AND
-_MaxStackAmount3 > 1
+DB_CE_ContainerOwner((ITEM)_ActiveContainer, _)
 AND
-GetDirectInventoryOwner(_Item3, (ITEM)_DirectOwner3)
+DB_CE_CanonicalItem((ITEM)_ActiveContainer, _Template, (ITEM)_Canonical)
 AND
-DB_ContainersExtended_Stack_Owner((ITEM)_DirectOwner3, (CHARACTER)_Player3)
+NOT DB_CE_CanonicalItem((ITEM)_ActiveContainer, _Template, (ITEM)_Item)
 AND
-GetTemplate(_Item3, _Template3)
+DB_CE_CanonicalMax((ITEM)_ActiveContainer, _Template, _CanonMax)
 AND
-DB_CE_CanonicalItem((ITEM)_DirectOwner3, _Template3, (ITEM)_Canonical3)
+DB_CE_CanonicalAmt((ITEM)_ActiveContainer, _Template, _CanonAmount)
 AND
-NOT DB_CE_CanonicalItem((ITEM)_DirectOwner3, _Template3, (ITEM)_Item3)
+_CanonAmount < _CanonMax
 AND
-DB_CE_CanonicalAmt((ITEM)_DirectOwner3, _Template3, _CanonAmount3)
+GetStackAmount((ITEM)_Item, _ItemGsMax, _ItemAmount)
 AND
-_CanonAmount3 < _MaxStackAmount3
+_ItemAmount < _CanonMax
 AND
-GetStackAmount((ITEM)_Item3, _ItemAmount3, _)
+_ItemGsMax <= _ItemAmount
 AND
-_ItemAmount3 < _MaxStackAmount3
+IntegerSum(_CanonAmount, _ItemAmount, _NewAmount)
 AND
-IntegerSum(_CanonAmount3, _ItemAmount3, _NewAmount3)
+_NewAmount > _CanonMax
 AND
-_NewAmount3 > _MaxStackAmount3
-AND
-IntegerSubtract(_NewAmount3, _MaxStackAmount3, _Remainder3)
+IntegerSubtract(_NewAmount, _CanonMax, _Remainder)
 THEN
-SetStackAmount((ITEM)_Canonical3, _MaxStackAmount3);
-SetStackAmount((ITEM)_Item3, _Remainder3);
-NOT DB_CE_CanonicalAmt((ITEM)_DirectOwner3, _Template3, _CanonAmount3);
-DB_CE_CanonicalAmt((ITEM)_DirectOwner3, _Template3, _MaxStackAmount3);
+SetStackAmount((ITEM)_Canonical, _CanonMax);
+SetStackAmount((ITEM)_Item, _Remainder);
+NOT DB_CE_CanonicalItem((ITEM)_ActiveContainer, _Template, (ITEM)_Canonical);
+DB_CE_CanonicalItem((ITEM)_ActiveContainer, _Template, (ITEM)_Item);
+NOT DB_CE_CanonicalAmt((ITEM)_ActiveContainer, _Template, _CanonAmount);
+DB_CE_CanonicalAmt((ITEM)_ActiveContainer, _Template, _Remainder);
 
-// Cleanup canonical item DB entries once all items in a container have been processed.
-IF
-EntityEvent(_ContainerDone, "ContainersExtendedForceSort_StackItemDone")
-AND
-DB_CE_CanonicalItem((ITEM)_ContainerDone, _CleanTemplate, (ITEM)_CleanItem)
-THEN
-NOT DB_CE_CanonicalItem((ITEM)_ContainerDone, _CleanTemplate, (ITEM)_CleanItem);
+// ---- Cleanup (ObjectTimerLaunch fires ObjectTimerFinished after ~1s) ----
+// NOTE: ObjectTimerLaunch fires ObjectTimerFinished (NOT EntityEvent) in BG3.
+// All cleanup rules must use ObjectTimerFinished as the trigger.
 
-// Cleanup canonical amount DB entries.
 IF
-EntityEvent(_ContainerDone2, "ContainersExtendedForceSort_StackItemDone")
+ObjectTimerFinished((ITEM)_Container, "CEFS_Cleanup")
 AND
-DB_CE_CanonicalAmt((ITEM)_ContainerDone2, _CleanTemplate2, _CleanAmt)
-THEN
-NOT DB_CE_CanonicalAmt((ITEM)_ContainerDone2, _CleanTemplate2, _CleanAmt);
-
-// Cleanup container->player DB entry when container processing is done.
-IF
-EntityEvent(_ContainerDone3, "ContainersExtendedForceSort_StackItemDone")
+DB_CE_CanonicalItem((ITEM)_Container, _Template, (ITEM)_Canon)
 AND
-DB_ContainersExtended_Stack_Owner((ITEM)_ContainerDone3, (CHARACTER)_CleanPlayer)
-THEN
-NOT DB_ContainersExtended_Stack_Owner((ITEM)_ContainerDone3, (CHARACTER)_CleanPlayer);
-
-// ---- DEBUG ----
-// CE_DBG_A: fires for ANY UseStarted event with no conditions — confirms event fires at all.
-IF
-UseStarted(_DbgPlayer, _DbgContainer)
-THEN
-ApplyStatus(_DbgContainer, "CE_DBG_A", 30.0, 1);
-
-// CE_DBG_B: fires only if the used item is tagged as ExtraplanarContainer.
-IF
-UseStarted(_DbgPlayer2, _DbgContainer2)
+DB_CE_CanonicalAmt((ITEM)_Container, _Template, _Amt)
 AND
-IsTagged((ITEM)_DbgContainer2, (TAG)EXTRAPLANARCONTAINER_8bbc5e54-e381-4526-b082-4d85fc510d15, 1)
+DB_CE_CanonicalMax((ITEM)_Container, _Template, _Max)
 THEN
-ApplyStatus(_DbgContainer2, "CE_DBG_B", 30.0, 1);
-// ---- END DEBUG ----
+NOT DB_CE_CanonicalItem((ITEM)_Container, _Template, (ITEM)_Canon);
+NOT DB_CE_CanonicalAmt((ITEM)_Container, _Template, _Amt);
+NOT DB_CE_CanonicalMax((ITEM)_Container, _Template, _Max);
+
+IF
+ObjectTimerFinished((ITEM)_Container, "CEFS_Cleanup")
+AND
+DB_CE_ContainerOwner((ITEM)_Container, (CHARACTER)_Owner)
+THEN
+NOT DB_CE_ContainerOwner((ITEM)_Container, (CHARACTER)_Owner);
+
+IF
+ObjectTimerFinished((ITEM)_Container, "CEFS_Cleanup")
+AND
+DB_ContainersExtended_Stack_Owner((ITEM)_Container, (CHARACTER)_Owner)
+THEN
+NOT DB_ContainersExtended_Stack_Owner((ITEM)_Container, (CHARACTER)_Owner);
+
 
 EXITSECTION
 

@@ -15,11 +15,6 @@ THEN
 ApplyStatus(_Item, "CONTAINERS_EXTENDED_FORCESORT", -1.0, 1);
 PROC_ContainersExtended_SortItems(_Item, _Inventory);
 
-// AND
-// Random(1000, _Delay)
-// THEN
-// ObjectTimerLaunch(_Item, "ContainersExtended_ForceSort", _Delay);
-
 EXITSECTION
 
 ENDEXITSECTION
