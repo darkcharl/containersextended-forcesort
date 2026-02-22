@@ -1,0 +1,48 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+// Clear any stuck per-container sort state on every load.
+// Prevents a permanent deadlock if the game was saved while a sort was in
+// progress (after IterateInventory was called but before the 1-second
+// CEFS_Cleanup timer fired), which leaves DB_CE_ContainerOwner set in the
+// save file with no pending timer to clear it.
+IF
+LevelGameplayStarted(_, _)
+AND
+DB_CE_ContainerOwner((ITEM)_StuckContainer, (CHARACTER)_StuckOwner)
+THEN
+NOT DB_CE_ContainerOwner((ITEM)_StuckContainer, (CHARACTER)_StuckOwner);
+
+IF
+LevelGameplayStarted(_, _)
+AND
+DB_ContainersExtended_Stack_Owner((ITEM)_StuckContainer, (CHARACTER)_StuckOwner)
+THEN
+NOT DB_ContainersExtended_Stack_Owner((ITEM)_StuckContainer, (CHARACTER)_StuckOwner);
+
+IF
+LevelGameplayStarted(_, _)
+AND
+DB_CE_CanonicalItem((ITEM)_StuckContainer, _StuckTpl, (ITEM)_StuckItem)
+THEN
+NOT DB_CE_CanonicalItem((ITEM)_StuckContainer, _StuckTpl, (ITEM)_StuckItem);
+
+IF
+LevelGameplayStarted(_, _)
+AND
+DB_CE_CanonicalAmt((ITEM)_StuckContainer, _StuckTpl, _StuckAmt)
+THEN
+NOT DB_CE_CanonicalAmt((ITEM)_StuckContainer, _StuckTpl, _StuckAmt);
+
+IF
+LevelGameplayStarted(_, _)
+AND
+DB_CE_CanonicalMax((ITEM)_StuckContainer, _StuckTpl, _StuckMax)
+THEN
+NOT DB_CE_CanonicalMax((ITEM)_StuckContainer, _StuckTpl, _StuckMax);
+
+EXITSECTION
+
+ENDEXITSECTION
