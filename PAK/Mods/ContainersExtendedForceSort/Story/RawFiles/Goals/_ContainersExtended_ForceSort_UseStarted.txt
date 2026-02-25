@@ -1,0 +1,177 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+// When a player uses (opens) an ExtraplanarContainer, merge any duplicate partial
+// stacks inside it. UseStarted fires for inventory-bag containers; Opened() only
+// fires for world containers (chests, doors) and does NOT fire for inventory bags.
+
+IF
+UseStarted(_Player, _Container)
+AND
+NOT DB_GlobalFlag((FLAG)ContainersExtended_ForceSort_Disabled_5a5d0e15-8ed5-4556-b8ce-071c07ee825f)
+AND
+DB_Players((CHARACTER)_Player)
+AND
+IsTagged((ITEM)_Container, (TAG)EXTRAPLANARCONTAINER_8bbc5e54-e381-4526-b082-4d85fc510d15, 1)
+THEN
+DB_ContainersExtended_Stack_Owner((ITEM)_Container, (CHARACTER)_Player);
+IterateInventory(_Container, "ContainersExtendedForceSort_StackItem", "ContainersExtendedForceSort_StackItemDone");
+
+// Rule 1: Mark the first non-full item of each (container, template) pair as canonical,
+// and record its current stack amount in DB_CE_CanonicalAmt so Rules 2a/2b can track
+// running totals without reading stale engine values across multiple merges per pass.
+// Full stacks are excluded — they cannot accept any more items.
+// Must be listed before Rules 2a/2b.
+IF
+EntityEvent(_Item, "ContainersExtendedForceSort_StackItem")
+AND
+IsItem((ITEM)_Item, 1)
+AND
+NOT DB_GlobalFlag((FLAG)ContainersExtended_ForceSort_Disabled_5a5d0e15-8ed5-4556-b8ce-071c07ee825f)
+AND
+GetMaxStackAmount((ITEM)_Item, _MaxStackAmount)
+AND
+_MaxStackAmount > 1
+AND
+GetStackAmount((ITEM)_Item, _ItemCurrentAmount, _)
+AND
+_ItemCurrentAmount < _MaxStackAmount
+AND
+GetDirectInventoryOwner(_Item, (ITEM)_DirectOwner)
+AND
+DB_ContainersExtended_Stack_Owner((ITEM)_DirectOwner, (CHARACTER)_Player)
+AND
+GetTemplate(_Item, _Template)
+AND
+NOT DB_CE_CanonicalItem((ITEM)_DirectOwner, _Template, _)
+THEN
+DB_CE_CanonicalItem((ITEM)_DirectOwner, _Template, (ITEM)_Item);
+DB_CE_CanonicalAmt((ITEM)_DirectOwner, _Template, _ItemCurrentAmount);
+
+// Rule 2a: Merge non-canonical item into canonical when combined count fits within max.
+// Reads canonical amount from DB_CE_CanonicalAmt (not the engine) so accumulated
+// changes from earlier merges in the same IterateInventory pass are reflected correctly.
+IF
+EntityEvent(_Item, "ContainersExtendedForceSort_StackItem")
+AND
+IsItem((ITEM)_Item, 1)
+AND
+NOT DB_GlobalFlag((FLAG)ContainersExtended_ForceSort_Disabled_5a5d0e15-8ed5-4556-b8ce-071c07ee825f)
+AND
+GetMaxStackAmount((ITEM)_Item, _MaxStackAmount2)
+AND
+_MaxStackAmount2 > 1
+AND
+GetDirectInventoryOwner(_Item, (ITEM)_DirectOwner2)
+AND
+DB_ContainersExtended_Stack_Owner((ITEM)_DirectOwner2, (CHARACTER)_Player2)
+AND
+GetTemplate(_Item, _Template2)
+AND
+DB_CE_CanonicalItem((ITEM)_DirectOwner2, _Template2, (ITEM)_Canonical)
+AND
+NOT DB_CE_CanonicalItem((ITEM)_DirectOwner2, _Template2, (ITEM)_Item)
+AND
+DB_CE_CanonicalAmt((ITEM)_DirectOwner2, _Template2, _CanonAmount)
+AND
+GetStackAmount((ITEM)_Item, _ItemAmount, _)
+AND
+_ItemAmount < _MaxStackAmount2
+AND
+IntegerSum(_CanonAmount, _ItemAmount, _NewAmount)
+AND
+_NewAmount <= _MaxStackAmount2
+THEN
+SetStackAmount((ITEM)_Canonical, _NewAmount);
+RequestDelete(_Item);
+NOT DB_CE_CanonicalAmt((ITEM)_DirectOwner2, _Template2, _CanonAmount);
+DB_CE_CanonicalAmt((ITEM)_DirectOwner2, _Template2, _NewAmount);
+
+// Rule 2b: Overflow — combined count exceeds max. Fill canonical to max and reduce
+// item to the remainder (do NOT delete it). Reads/updates DB_CE_CanonicalAmt for the
+// same reason as 2a. On the next open the leftover stack may fit into a new canonical.
+IF
+EntityEvent(_Item3, "ContainersExtendedForceSort_StackItem")
+AND
+IsItem((ITEM)_Item3, 1)
+AND
+NOT DB_GlobalFlag((FLAG)ContainersExtended_ForceSort_Disabled_5a5d0e15-8ed5-4556-b8ce-071c07ee825f)
+AND
+GetMaxStackAmount((ITEM)_Item3, _MaxStackAmount3)
+AND
+_MaxStackAmount3 > 1
+AND
+GetDirectInventoryOwner(_Item3, (ITEM)_DirectOwner3)
+AND
+DB_ContainersExtended_Stack_Owner((ITEM)_DirectOwner3, (CHARACTER)_Player3)
+AND
+GetTemplate(_Item3, _Template3)
+AND
+DB_CE_CanonicalItem((ITEM)_DirectOwner3, _Template3, (ITEM)_Canonical3)
+AND
+NOT DB_CE_CanonicalItem((ITEM)_DirectOwner3, _Template3, (ITEM)_Item3)
+AND
+DB_CE_CanonicalAmt((ITEM)_DirectOwner3, _Template3, _CanonAmount3)
+AND
+_CanonAmount3 < _MaxStackAmount3
+AND
+GetStackAmount((ITEM)_Item3, _ItemAmount3, _)
+AND
+_ItemAmount3 < _MaxStackAmount3
+AND
+IntegerSum(_CanonAmount3, _ItemAmount3, _NewAmount3)
+AND
+_NewAmount3 > _MaxStackAmount3
+AND
+IntegerSubtract(_NewAmount3, _MaxStackAmount3, _Remainder3)
+THEN
+SetStackAmount((ITEM)_Canonical3, _MaxStackAmount3);
+SetStackAmount((ITEM)_Item3, _Remainder3);
+NOT DB_CE_CanonicalAmt((ITEM)_DirectOwner3, _Template3, _CanonAmount3);
+DB_CE_CanonicalAmt((ITEM)_DirectOwner3, _Template3, _MaxStackAmount3);
+
+// Cleanup canonical item DB entries once all items in a container have been processed.
+IF
+EntityEvent(_ContainerDone, "ContainersExtendedForceSort_StackItemDone")
+AND
+DB_CE_CanonicalItem((ITEM)_ContainerDone, _CleanTemplate, (ITEM)_CleanItem)
+THEN
+NOT DB_CE_CanonicalItem((ITEM)_ContainerDone, _CleanTemplate, (ITEM)_CleanItem);
+
+// Cleanup canonical amount DB entries.
+IF
+EntityEvent(_ContainerDone2, "ContainersExtendedForceSort_StackItemDone")
+AND
+DB_CE_CanonicalAmt((ITEM)_ContainerDone2, _CleanTemplate2, _CleanAmt)
+THEN
+NOT DB_CE_CanonicalAmt((ITEM)_ContainerDone2, _CleanTemplate2, _CleanAmt);
+
+// Cleanup container->player DB entry when container processing is done.
+IF
+EntityEvent(_ContainerDone3, "ContainersExtendedForceSort_StackItemDone")
+AND
+DB_ContainersExtended_Stack_Owner((ITEM)_ContainerDone3, (CHARACTER)_CleanPlayer)
+THEN
+NOT DB_ContainersExtended_Stack_Owner((ITEM)_ContainerDone3, (CHARACTER)_CleanPlayer);
+
+// ---- DEBUG ----
+// CE_DBG_A: fires for ANY UseStarted event with no conditions — confirms event fires at all.
+IF
+UseStarted(_DbgPlayer, _DbgContainer)
+THEN
+ApplyStatus(_DbgContainer, "CE_DBG_A", 30.0, 1);
+
+// CE_DBG_B: fires only if the used item is tagged as ExtraplanarContainer.
+IF
+UseStarted(_DbgPlayer2, _DbgContainer2)
+AND
+IsTagged((ITEM)_DbgContainer2, (TAG)EXTRAPLANARCONTAINER_8bbc5e54-e381-4526-b082-4d85fc510d15, 1)
+THEN
+ApplyStatus(_DbgContainer2, "CE_DBG_B", 30.0, 1);
+// ---- END DEBUG ----
+
+EXITSECTION
+
+ENDEXITSECTION
