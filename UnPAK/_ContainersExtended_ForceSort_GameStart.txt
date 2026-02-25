@@ -1,0 +1,111 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+
+KBSECTION
+// On level/game start, eject partial stacks from Extraplanar Containers back to the
+// owning player's inventory. Removing CONTAINERS_EXTENDED_FORCESORT first ensures the
+// AddedTo rule re-fires, which re-sorts the item and lets the Stack script merge it
+// with any matching stack already in the container.
+
+IF
+LevelGameplayStarted(_, _)
+AND
+NOT DB_GlobalFlag((FLAG)ContainersExtended_ForceSort_Disabled_5a5d0e15-8ed5-4556-b8ce-071c07ee825f)
+AND
+DB_Players(_Player)
+THEN
+IterateInventory(_Player, "ContainersExtendedForceSort_StackContainer", "ContainersExtendedForceSort_StackContainerDone");
+
+// Store container -> player mapping using IsInInventoryOf with CHARACTER (confirmed working).
+IF
+EntityEvent(_Container, "ContainersExtendedForceSort_StackContainer")
+AND
+IsTagged((ITEM)_Container, (TAG)EXTRAPLANARCONTAINER_8bbc5e54-e381-4526-b082-4d85fc510d15, 1)
+AND
+DB_Players(_Player)
+AND
+IsInInventoryOf(_Container, (CHARACTER)_Player, 1)
+THEN
+DB_ContainersExtended_Stack_Owner((ITEM)_Container, _Player);
+IterateInventory(_Container, "ContainersExtendedForceSort_StackItem", "ContainersExtendedForceSort_StackItemDone");
+
+// Eject partial stacks. IsInInventoryOf accepts ITEM as second arg — use it to match
+// each item to its container and recover the player reference from the DB.
+IF
+EntityEvent(_Item, "ContainersExtendedForceSort_StackItem")
+AND
+IsItem((ITEM)_Item, 1)
+AND
+NOT DB_GlobalFlag((FLAG)ContainersExtended_ForceSort_Disabled_5a5d0e15-8ed5-4556-b8ce-071c07ee825f)
+AND
+GetMaxStackAmount((ITEM)_Item, _MaxStackAmount)
+AND
+_MaxStackAmount > 1
+AND
+GetStackAmount((ITEM)_Item, _ExactItemAmount, _)
+AND
+DB_ContainersExtended_Stack_Owner((ITEM)_Container, _Player)
+AND
+IsInInventoryOf(_Item, (CHARACTER)_Player, 1)
+THEN
+RemoveStatus(_Item, "CONTAINERS_EXTENDED_FORCESORT");
+ToInventory(_Item, _Player, _ExactItemAmount, 0, 0);
+
+// ---- DEBUG LADDER (applied directly to items, visible on item inspect) ----
+
+// CE_DBG_A: StackItem event fired and item is an item
+IF
+EntityEvent(_ItemDbgA, "ContainersExtendedForceSort_StackItem")
+AND
+IsItem((ITEM)_ItemDbgA, 1)
+THEN
+ApplyStatus(_ItemDbgA, "CE_DBG_A", -1.0, 1);
+
+// CE_DBG_B: item is stackable (MaxStack > 1)
+IF
+EntityEvent(_ItemDbgB, "ContainersExtendedForceSort_StackItem")
+AND
+IsItem((ITEM)_ItemDbgB, 1)
+AND
+GetMaxStackAmount((ITEM)_ItemDbgB, _DbgMaxStack)
+AND
+_DbgMaxStack > 1
+THEN
+ApplyStatus(_ItemDbgB, "CE_DBG_B", -1.0, 1);
+
+// CE_DBG_C: DB_ContainersExtended_Stack_Owner lookup returns any match
+IF
+EntityEvent(_ItemDbgC, "ContainersExtendedForceSort_StackItem")
+AND
+IsItem((ITEM)_ItemDbgC, 1)
+AND
+GetMaxStackAmount((ITEM)_ItemDbgC, _DbgMaxStack2)
+AND
+_DbgMaxStack2 > 1
+AND
+DB_ContainersExtended_Stack_Owner((ITEM)_ContainerDbgC, _PlayerDbgC)
+THEN
+ApplyStatus(_ItemDbgC, "CE_DBG_C", -1.0, 1);
+
+// CE_DBG_D: IsInInventoryOf with CHARACTER as second arg passes (the fixed form)
+IF
+EntityEvent(_ItemDbgD, "ContainersExtendedForceSort_StackItem")
+AND
+IsItem((ITEM)_ItemDbgD, 1)
+AND
+GetMaxStackAmount((ITEM)_ItemDbgD, _DbgMaxStack3)
+AND
+_DbgMaxStack3 > 1
+AND
+DB_ContainersExtended_Stack_Owner((ITEM)_ContainerDbgD, _PlayerDbgD)
+AND
+IsInInventoryOf(_ItemDbgD, (CHARACTER)_PlayerDbgD, 1)
+THEN
+ApplyStatus(_ItemDbgD, "CE_DBG_D", -1.0, 1);
+
+// ---- END DEBUG ----
+
+EXITSECTION
+
+ENDEXITSECTION
