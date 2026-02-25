@@ -3,10 +3,11 @@ SubGoalCombiner SGC_AND
 INITSECTION
 
 KBSECTION
-// On level/game start, eject partial stacks from Extraplanar Containers back to the
-// owning player's inventory. Removing CONTAINERS_EXTENDED_FORCESORT first ensures the
-// AddedTo rule re-fires, which re-sorts the item and lets the Stack script merge it
-// with any matching stack already in the container.
+// On level/game start, directly merge duplicate partial stacks inside Extraplanar Containers.
+// For each stackable item, GetDirectInventoryOwner binds it to its exact container.
+// Rule 1 designates the first item of each template as canonical.
+// Rule 2 merges subsequent duplicates into the canonical via SetStackAmount + RequestDelete.
+// No ForceSort or AddedTo chain involved — merge is done entirely in-place.
 
 IF
 LevelGameplayStarted(_, _)
@@ -17,7 +18,7 @@ DB_Players(_Player)
 THEN
 IterateInventory(_Player, "ContainersExtendedForceSort_StackContainer", "ContainersExtendedForceSort_StackContainerDone");
 
-// Store container -> player mapping using IsInInventoryOf with CHARACTER (confirmed working).
+// Store container -> player mapping.
 IF
 EntityEvent(_Container, "ContainersExtendedForceSort_StackContainer")
 AND
@@ -27,11 +28,11 @@ DB_Players(_Player)
 AND
 IsInInventoryOf(_Container, (CHARACTER)_Player, 1)
 THEN
-DB_ContainersExtended_Stack_Owner((ITEM)_Container, _Player);
+DB_ContainersExtended_Stack_Owner((ITEM)_Container, (CHARACTER)_Player);
 IterateInventory(_Container, "ContainersExtendedForceSort_StackItem", "ContainersExtendedForceSort_StackItemDone");
 
-// Eject partial stacks. IsInInventoryOf accepts ITEM as second arg — use it to match
-// each item to its container and recover the player reference from the DB.
+// Rule 1: Mark the first item of each (container, template) pair as canonical.
+// Must be listed before Rule 2 so the DB entry exists when Rule 2 evaluates.
 IF
 EntityEvent(_Item, "ContainersExtendedForceSort_StackItem")
 AND
@@ -43,18 +44,77 @@ GetMaxStackAmount((ITEM)_Item, _MaxStackAmount)
 AND
 _MaxStackAmount > 1
 AND
-GetStackAmount((ITEM)_Item, _ExactItemAmount, _)
+GetDirectInventoryOwner(_Item, (ITEM)_DirectOwner)
 AND
-DB_ContainersExtended_Stack_Owner((ITEM)_Container, _Player)
+DB_ContainersExtended_Stack_Owner((ITEM)_DirectOwner, (CHARACTER)_Player)
 AND
-IsInInventoryOf(_Item, (CHARACTER)_Player, 1)
+GetTemplate(_Item, _Template)
+AND
+NOT DB_CE_CanonicalItem((ITEM)_DirectOwner, _Template, _)
 THEN
-RemoveStatus(_Item, "CONTAINERS_EXTENDED_FORCESORT");
-ToInventory(_Item, _Player, _ExactItemAmount, 0, 0);
+DB_CE_CanonicalItem((ITEM)_DirectOwner, _Template, (ITEM)_Item);
 
-// ---- DEBUG LADDER (applied directly to items, visible on item inspect) ----
+// Rule 2: Merge non-canonical items into the canonical stack, then delete them.
+IF
+EntityEvent(_Item, "ContainersExtendedForceSort_StackItem")
+AND
+IsItem((ITEM)_Item, 1)
+AND
+NOT DB_GlobalFlag((FLAG)ContainersExtended_ForceSort_Disabled_5a5d0e15-8ed5-4556-b8ce-071c07ee825f)
+AND
+GetMaxStackAmount((ITEM)_Item, _MaxStackAmount2)
+AND
+_MaxStackAmount2 > 1
+AND
+GetDirectInventoryOwner(_Item, (ITEM)_DirectOwner2)
+AND
+DB_ContainersExtended_Stack_Owner((ITEM)_DirectOwner2, (CHARACTER)_Player2)
+AND
+GetTemplate(_Item, _Template2)
+AND
+DB_CE_CanonicalItem((ITEM)_DirectOwner2, _Template2, (ITEM)_Canonical)
+AND
+NOT DB_CE_CanonicalItem((ITEM)_DirectOwner2, _Template2, (ITEM)_Item)
+AND
+GetStackAmount((ITEM)_Canonical, _CanonAmount, _)
+AND
+GetStackAmount((ITEM)_Item, _ItemAmount, _)
+AND
+IntegerSum(_CanonAmount, _ItemAmount, _NewAmount)
+AND
+_NewAmount <= _MaxStackAmount2
+THEN
+SetStackAmount((ITEM)_Canonical, _NewAmount);
+RequestDelete(_Item);
 
-// CE_DBG_A: StackItem event fired and item is an item
+// Cleanup canonical DB entries once all items in a container have been processed.
+IF
+EntityEvent(_ContainerDone, "ContainersExtendedForceSort_StackItemDone")
+AND
+DB_CE_CanonicalItem((ITEM)_ContainerDone, _CleanTemplate, (ITEM)_CleanItem)
+THEN
+NOT DB_CE_CanonicalItem((ITEM)_ContainerDone, _CleanTemplate, (ITEM)_CleanItem);
+
+// Cleanup container->player DB entries once all items in a player's inventory are processed.
+IF
+EntityEvent(_PlayerDone, "ContainersExtendedForceSort_StackContainerDone")
+AND
+DB_ContainersExtended_Stack_Owner((ITEM)_CleanContainer, (CHARACTER)_PlayerDone)
+THEN
+NOT DB_ContainersExtended_Stack_Owner((ITEM)_CleanContainer, (CHARACTER)_PlayerDone);
+
+// ---- DEBUG ----
+
+// CE_DBG_E: GetDirectInventoryOwner returns a value for items inside containers
+IF
+EntityEvent(_ItemDbgE, "ContainersExtendedForceSort_StackItem")
+AND
+IsItem((ITEM)_ItemDbgE, 1)
+AND
+GetDirectInventoryOwner(_ItemDbgE, _)
+THEN
+ApplyStatus(_ItemDbgE, "CE_DBG_E", -1.0, 1);
+
 IF
 EntityEvent(_ItemDbgA, "ContainersExtendedForceSort_StackItem")
 AND
@@ -62,7 +122,6 @@ IsItem((ITEM)_ItemDbgA, 1)
 THEN
 ApplyStatus(_ItemDbgA, "CE_DBG_A", -1.0, 1);
 
-// CE_DBG_B: item is stackable (MaxStack > 1)
 IF
 EntityEvent(_ItemDbgB, "ContainersExtendedForceSort_StackItem")
 AND
@@ -74,7 +133,6 @@ _DbgMaxStack > 1
 THEN
 ApplyStatus(_ItemDbgB, "CE_DBG_B", -1.0, 1);
 
-// CE_DBG_C: DB_ContainersExtended_Stack_Owner lookup returns any match
 IF
 EntityEvent(_ItemDbgC, "ContainersExtendedForceSort_StackItem")
 AND
@@ -84,11 +142,10 @@ GetMaxStackAmount((ITEM)_ItemDbgC, _DbgMaxStack2)
 AND
 _DbgMaxStack2 > 1
 AND
-DB_ContainersExtended_Stack_Owner((ITEM)_ContainerDbgC, _PlayerDbgC)
+DB_ContainersExtended_Stack_Owner((ITEM)_ContainerDbgC, (CHARACTER)_PlayerDbgC)
 THEN
 ApplyStatus(_ItemDbgC, "CE_DBG_C", -1.0, 1);
 
-// CE_DBG_D: IsInInventoryOf with CHARACTER as second arg passes (the fixed form)
 IF
 EntityEvent(_ItemDbgD, "ContainersExtendedForceSort_StackItem")
 AND
@@ -98,7 +155,7 @@ GetMaxStackAmount((ITEM)_ItemDbgD, _DbgMaxStack3)
 AND
 _DbgMaxStack3 > 1
 AND
-DB_ContainersExtended_Stack_Owner((ITEM)_ContainerDbgD, _PlayerDbgD)
+DB_ContainersExtended_Stack_Owner((ITEM)_ContainerDbgD, (CHARACTER)_PlayerDbgD)
 AND
 IsInInventoryOf(_ItemDbgD, (CHARACTER)_PlayerDbgD, 1)
 THEN
