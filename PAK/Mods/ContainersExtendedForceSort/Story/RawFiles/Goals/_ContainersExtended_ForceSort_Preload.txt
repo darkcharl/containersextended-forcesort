@@ -43,6 +43,13 @@ DB_CE_CanonicalMax((ITEM)_StuckContainer, _StuckTpl, _StuckMax)
 THEN
 NOT DB_CE_CanonicalMax((ITEM)_StuckContainer, _StuckTpl, _StuckMax);
 
+IF
+LevelGameplayStarted(_, _)
+AND
+DB_CE_PendingDelete((ITEM)_StuckContainer, (ITEM)_StuckItem)
+THEN
+NOT DB_CE_PendingDelete((ITEM)_StuckContainer, (ITEM)_StuckItem);
+
 EXITSECTION
 
 ENDEXITSECTION

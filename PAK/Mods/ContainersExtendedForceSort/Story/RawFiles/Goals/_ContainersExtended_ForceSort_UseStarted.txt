@@ -107,7 +107,8 @@ AND
 _NewAmount <= _CanonMax
 THEN
 SetStackAmount((ITEM)_Canonical, _NewAmount);
-RequestDelete(_Item);
+SetStackAmount((ITEM)_Item, 0);
+DB_CE_PendingDelete((ITEM)_ActiveContainer, (ITEM)_Item);
 NOT DB_CE_CanonicalAmt((ITEM)_ActiveContainer, _Template, _CanonAmount);
 DB_CE_CanonicalAmt((ITEM)_ActiveContainer, _Template, _NewAmount);
 
@@ -187,6 +188,16 @@ AND
 DB_ContainersExtended_Stack_Owner((ITEM)_Container, (CHARACTER)_Owner)
 THEN
 NOT DB_ContainersExtended_Stack_Owner((ITEM)_Container, (CHARACTER)_Owner);
+
+// Deferred delete: RequestDelete fires one cycle after SetStackAmount(0) committed,
+// so the engine sees actual=0 at deletion time and does not redistribute the count.
+IF
+ObjectTimerFinished((ITEM)_Container, "CEFS_Cleanup")
+AND
+DB_CE_PendingDelete((ITEM)_Container, (ITEM)_ItemToDelete)
+THEN
+RequestDelete(_ItemToDelete);
+NOT DB_CE_PendingDelete((ITEM)_Container, (ITEM)_ItemToDelete);
 
 
 EXITSECTION
